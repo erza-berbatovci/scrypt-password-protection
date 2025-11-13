@@ -22,3 +22,22 @@ def hmac_sha256(key: ByteString, message: ByteString) -> bytes:
 
     inner = hashlib.sha256(ipad + message).digest()
     return hashlib.sha256(opad + inner).digest()
+
+def pbkdf2_hmac_sha256(password: ByteString, salt: ByteString, iterations: int, dklen: int) -> bytes:
+
+    hlen = 32
+    l = math.ceil(dklen / hlen)
+    r = dklen - (l - 1) * hlen
+
+    def F(block_index: int) -> bytes:
+        int_block = struct.pack('>I', block_index)
+        U = hmac_sha256(password, salt + int_block)
+        T = bytearray(U)
+        for _ in range(1, iterations):
+            U = hmac_sha256(password, U)
+            for i in range(hlen):
+                T[i] ^= U[i]
+        return bytes(T)
+
+    DK = b''.join(F(i + 1) for i in range(l))
+    return DK[:dklen]
