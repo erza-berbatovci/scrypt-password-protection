@@ -41,3 +41,23 @@ def pbkdf2_hmac_sha256(password: ByteString, salt: ByteString, iterations: int, 
 
     DK = b''.join(F(i + 1) for i in range(l))
     return DK[:dklen]
+
+def R(a: int, b: int) -> int:
+    return ((a << b) & 0xffffffff) | (a >> (32 - b))
+
+
+def quarterround(y0, y1, y2, y3):
+    z1 = y1 ^ R((y0 + y3) & 0xffffffff, 7)
+    z2 = y2 ^ R((z1 + y0) & 0xffffffff, 9)
+    z3 = y3 ^ R((z2 + z1) & 0xffffffff, 13)
+    z0 = y0 ^ R((z3 + z2) & 0xffffffff, 18)
+    return z0, z1, z2, z3
+
+
+def rowround(y):
+    z = list(y)
+    z[0], z[1], z[2], z[3] = quarterround(y[0], y[1], y[2], y[3])
+    z[5], z[6], z[7], z[4] = quarterround(y[5], y[6], y[7], y[4])
+    z[10], z[11], z[8], z[9] = quarterround(y[10], y[11], y[8], y[9])
+    z[15], z[12], z[13], z[14] = quarterround(y[15], y[12], y[13], y[14])
+    return z
