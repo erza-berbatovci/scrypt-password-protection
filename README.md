@@ -194,5 +194,12 @@ dklen = 64
 
 dk = scrypt_kdf(password, salt, N, r, p, dklen)
 print("Derived key:", dk.hex())
+```
+# Encrypt a password with Scrypt (Run project).
+
+Clone the project fist
+
+```
+cd ScryptImplemented && python3 scrypt1.py
 
 
