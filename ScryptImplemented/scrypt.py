@@ -12,7 +12,7 @@ SCRYPT_P = 1
 SCRYPT_DKLEN = 64
 SALT_LEN = 16
 
-DB_SERVER = r'localhost\MSSQLSERVER02'
+DB_SERVER = r'localhost'
 DB_NAME = 'ScryptDB'
 DB_DRIVER = '{ODBC Driver 17 for SQL Server}'
 CONN_STR = f'DRIVER={DB_DRIVER};SERVER={DB_SERVER};DATABASE={DB_NAME};Trusted_Connection=yes;'
@@ -56,7 +56,7 @@ def get_user(username: str):
 def list_users():
     conn = pyodbc.connect(CONN_STR)
     cursor = conn.cursor()
-    cursor.execute('SELECT Id, Username FROM Users ORDER BY Id')
+    cursor.execute('SELECT Id, Username,PasswordHash FROM Users ORDER BY Id')
     rows = cursor.fetchall()
     conn.close()
     return rows
@@ -94,7 +94,6 @@ def verify_password(password: str, stored_hash: str) -> bool:
         )
     except Exception:
         return False
-    # përdor compare_digest (ose hmac.compare_digest) për krahasim të sigurt
     return hmac.compare_digest(key_test, key_stored)
 
 # ---------- Routes ----------

@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block content %}
+  <h3>Përdoruesit e regjistruar</h3>
+  <div class="card mt-3">
+    <div class="card-body">
+      {% if users %}
+        <ul class="list-group">
+          {% for id, username ,passworHash  in users %}
+            <li class="list-group-item">{{ id }} — {{ username }} -{{passworHash}}</li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p>Nuk ka përdorues të regjistruar.</p>
+      {% endif %}
+    </div>
+  </div>
+{% endblock %}
